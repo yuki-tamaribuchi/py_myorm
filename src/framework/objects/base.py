@@ -21,8 +21,8 @@ class ObjectsBase(object):
 
 	def get(self, **kwargs):
 		from framework.operates.select import SelectRecord
-		select_data = kwargs
-		select = SelectRecord(self.model_instance, select_data)
+		where_data = kwargs
+		select = SelectRecord(self.model_instance, where_data)
 		results = select.select_data()
 		return results
 
