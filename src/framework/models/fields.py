@@ -45,8 +45,11 @@ class FieldBase(object):
 			else:
 				raise NullValidationError(field_name)
 		
-
+		return True
 		#uniqueは一旦おいておく
+
+	def insert_sql(self):
+		pass
 
 
 	@property

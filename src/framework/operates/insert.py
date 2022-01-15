@@ -39,7 +39,8 @@ class InsertRecord:
 		
 
 	def create_data_set_dict(self):
-		table_name = self.model_instance.__name__.lower()
+		self.data_set_dict['table_name'] = self.model_instance.__name__.lower()
+		self.data_set_dict['data'] = {}
 
 		for k, v in self.match_dict.items():
 			field_name = k
@@ -47,5 +48,9 @@ class InsertRecord:
 			field_instance = v['field_instance']
 
 			field_instance.validate(k, v['insert_data'])
+			self.data_set_dict['data'][field_name] = v['insert_data']
+		print(self.data_set_dict)
+		return True
+	
 		
 			
