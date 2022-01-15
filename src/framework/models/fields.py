@@ -1,9 +1,12 @@
 from framework.models.base import ModelBase
 
-from framework.exceptions.validation import NullValidationError
+from framework.exceptions.validation import DataTypeValidationError, NullValidationError, MaxLengthValidationError
 
 
 class FieldBase(object):
+
+	data_type = None
+
 	def __init__(self, null:bool=True, unique:bool=False,*args, **kwargs):
 		self._value = None
 		self.null = null
@@ -35,6 +38,11 @@ class FieldBase(object):
 
 	def validate(self, field_name, data):
 
+		#データ型検証
+		if (self.data_type is not None and not self.data_type==type(data)):
+			raise DataTypeValidationError(field_name)
+			
+
 		#nullを許可しない、かつ、dataがnullの場合
 		if (not self.null) and (data is None):
 			#auto_incrementアトリビュートがあり、auto_incrementする場合は成功
@@ -47,8 +55,7 @@ class FieldBase(object):
 		return True
 		#uniqueは一旦おいておく
 
-	def insert_sql(self):
-		pass
+	
 
 
 	@property
@@ -116,6 +123,17 @@ class StringField(FieldBase):
 		) + super_sql
 
 		return sql
+
+	def validate(self, field_name, data):
+		super_validate_result = super().validate(field_name, data)
+
+		if super_validate_result:
+			if self.max_length<len(data):
+				raise MaxLengthValidationError(field_name)
+
+			return True
+
+
 
 
 
