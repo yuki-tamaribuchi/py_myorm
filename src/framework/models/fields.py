@@ -34,7 +34,6 @@ class FieldBase(object):
 		#(hasattr(self, 'auto_increment') and not self.auto_increment and data is None)
 
 	def validate(self, field_name, data):
-		print(self.__dict__)
 
 		#nullを許可しない、かつ、dataがnullの場合
 		if (not self.null) and (data is None):

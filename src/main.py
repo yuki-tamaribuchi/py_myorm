@@ -1,5 +1,5 @@
 from framework.operates.migrations import migrate_all_model
-#migrate_all_model()
+migrate_all_model()
 
 from models.users import Users
 

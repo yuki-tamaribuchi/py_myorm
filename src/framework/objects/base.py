@@ -6,9 +6,7 @@ class ObjectsBase(object):
 		insert_data = kwargs
 		from framework.operates.insert import InsertRecord
 		insert = InsertRecord(self.model_instance, insert_data)
-		insert.create_fields_dict()
-		insert.create_match_dict()
-		insert.create_data_set_dict()
+		insert.execute_sql()
 
 
 	def update(self, *args, **kwargs):
