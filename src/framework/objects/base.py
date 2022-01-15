@@ -19,8 +19,12 @@ class ObjectsBase(object):
 	def all(self, *args, **kwargs):
 		pass
 
-	def get(self, *args, **kwargs):
-		pass
+	def get(self, **kwargs):
+		from framework.operates.select import SelectRecord
+		select_data = kwargs
+		select = SelectRecord(self.model_instance, select_data)
+		results = select.select_data()
+		return results
 
 	def filter(self, *args, **kwargs):
 		pass
