@@ -1,5 +1,10 @@
 from framework.operates.migrations import migrate_all_model
+#migrate_all_model()
 
+from models.users import Users
 
-
-migrate_all_model()
+users = Users()
+users.objects.create(
+	username='sampleuser',
+	handle='sample user'
+)

@@ -1,6 +1,7 @@
 from framework.models.base import ModelBase
 
 
+
 class FieldBase(object):
 	def __init__(self, null:bool=True, unique:bool=False,*args, **kwargs):
 		self._value = None
@@ -28,6 +29,13 @@ class FieldBase(object):
 		return sql
 
 
+	def validate(self, data=None):
+		print(self.__dict__)
+		#if not self.null and self.value is None:
+		#	
+		#	return False
+
+
 	@property
 	def value(self):
 		return self._value
@@ -37,12 +45,10 @@ class FieldBase(object):
 		self._value = value
 
 
-	def __str__(self):
-		return str(self._value)
-
 
 
 class RelationBase(FieldBase):
+
 	def __init__(self, rel_model:ModelBase, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.rel_model = rel_model
@@ -54,6 +60,9 @@ class RelationBase(FieldBase):
 
 
 class IntegerField(FieldBase):
+
+	data_type = int
+
 	def __init__(self, auto_increment:bool=False, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.auto_increment = auto_increment
@@ -76,6 +85,9 @@ class IntegerField(FieldBase):
 	
 
 class StringField(FieldBase):
+
+	data_type = str
+
 	def __init__(self, max_length:int, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.max_length = max_length
