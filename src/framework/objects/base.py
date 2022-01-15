@@ -8,6 +8,7 @@ class ObjectsBase(object):
 		insert = InsertRecord(self.model_instance, insert_data)
 		insert.create_fields_dict()
 		insert.create_match_dict()
+		insert.create_data_set_dict()
 
 
 	def update(self, *args, **kwargs):

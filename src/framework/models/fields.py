@@ -1,5 +1,6 @@
 from framework.models.base import ModelBase
 
+from framework.exceptions.validation import NullValidationError
 
 
 class FieldBase(object):
@@ -28,12 +29,24 @@ class FieldBase(object):
 		)
 		return sql
 
+		#数値の場合auto_incrementが含まれていて、かつ、falseでの場合がエラー
+		#それ以外は、nullがfalseの場合エラー
+		#(hasattr(self, 'auto_increment') and not self.auto_increment and data is None)
 
-	def validate(self, data=None):
+	def validate(self, field_name, data):
 		print(self.__dict__)
-		#if not self.null and self.value is None:
-		#	
-		#	return False
+
+		#nullを許可しない、かつ、dataがnullの場合
+		if (not self.null) and (data is None):
+			#auto_incrementアトリビュートがあり、auto_incrementする場合は成功
+			if hasattr(self, 'auto_increment') and self.auto_increment:
+				pass
+			#auto_incrementアトリビュートがない、または、auto_incrementしないもの場合はエラー
+			else:
+				raise NullValidationError(field_name)
+		
+
+		#uniqueは一旦おいておく
 
 
 	@property

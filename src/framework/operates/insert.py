@@ -36,12 +36,16 @@ class InsertRecord:
 					self.match_dict[k] = field_instance_and_insert_data
 				else:
 					raise InsertDataMissingException(k)
-
-			
-		print(self.match_dict)
 		
 
 	def create_data_set_dict(self):
 		table_name = self.model_instance.__name__.lower()
+
+		for k, v in self.match_dict.items():
+			field_name = k
+
+			field_instance = v['field_instance']
+
+			field_instance.validate(k, v['insert_data'])
 		
 			
