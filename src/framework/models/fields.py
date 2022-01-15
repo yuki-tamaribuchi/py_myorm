@@ -71,12 +71,22 @@ class FieldBase(object):
 
 class RelationBase(FieldBase):
 
-	def __init__(self, rel_model:ModelBase, *args, **kwargs):
+	data_type = int
+
+	def __init__(self, rel_model:ModelBase, on_delete:bool, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.rel_model = rel_model
+		self.on_delete = on_delete
 	
 	def __str__(self):
 		return str(self.rel_model)
+
+	def field_sql(self):
+		
+		sql = "INT NOT NULL"
+
+		return sql
+
 	
 
 

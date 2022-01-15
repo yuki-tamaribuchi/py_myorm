@@ -1,7 +1,7 @@
 from typing import Type
 
 from framework.models.base import ModelBase
-from framework.models.fields import FieldBase
+from framework.models.fields import FieldBase, RelationBase
 
 from framework.operates.executes import execute
 
@@ -20,7 +20,10 @@ class CreateTable:
 		fields_dict = {}
 		for k, v in self.model.__dict__.items():
 			if issubclass(v.__class__, FieldBase):
-				fields_dict[k] = v
+				if issubclass(v.__class__, RelationBase):
+					fields_dict[k + "_id"] = v
+				else:
+					fields_dict[k] = v
 		
 		self.table_arch_dict = {
 			'name':table_name,
