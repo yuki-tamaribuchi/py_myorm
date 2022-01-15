@@ -62,8 +62,9 @@ class InsertRecord:
 
 
 		field_names_arr = [field_name for field_name, _ in self.data_set_dict['data'].items()]
-		field_values_arr = [field_value for _, field_value in self.data_set_dict['data'].items()]
 		field_values_holder_arr = ["%(" + field_name + ")s" for field_name, _ in self.data_set_dict['data'].items()]
+		field_values_arr = [field_value for _, field_value in self.data_set_dict['data'].items()]
+		
 		
 		field_names_sql = ", ".join(field_names_arr)
 		field_values_holder_sql = ", ".join(field_values_holder_arr)

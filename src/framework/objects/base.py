@@ -3,8 +3,9 @@ class ObjectsBase(object):
 		self.model_instance = model_instance
 
 	def create(self, **kwargs):
-		insert_data = kwargs
 		from framework.operates.insert import InsertRecord
+
+		insert_data = kwargs
 		insert = InsertRecord(self.model_instance, insert_data)
 		insert.execute_sql()
 
