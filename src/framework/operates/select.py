@@ -8,9 +8,8 @@ from framework.models.fields import FieldBase
 from framework.exceptions.select import SelectFieldError
 
 class SelectRecord:
-	def __init__(self, model_instance:Type[ModelBase], select_fields:dict=None, where_data:dict=None):
+	def __init__(self, model_instance:Type[ModelBase], where_data:dict=None):
 		self.model_instance = model_instance
-		self.select_fields = select_fields
 		self.where_data = where_data
 
 		self.model_fields_dict = {}
@@ -28,7 +27,7 @@ class SelectRecord:
 		self.select_data_dict['table_name'] = self.model_instance.__name__.lower()
 
 		self.select_data_dict['fields']={}
-		for k, v in self.select_fields.items():
+		for k, v in self.where_data.items():
 			if k in self.model_fields_dict:
 				
 				self.select_data_dict['fields'][k]={}
