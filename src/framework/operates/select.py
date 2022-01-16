@@ -1,10 +1,7 @@
 from typing import Type
 
-from framework.operates.executes import execute_select
-
 from framework.models.base import ModelBase
 from framework.models.fields import FieldBase
-
 from framework.exceptions.select import SelectFieldError
 
 class SelectRecord:
@@ -25,45 +22,47 @@ class SelectRecord:
 
 	def create_select_data_dict(self):
 		self.select_data_dict['table_name'] = self.model_instance.__name__.lower()
+		if self.where_data is None:
+			pass
+		else:
+			self.select_data_dict['fields']={}
+			for k, v in self.where_data.items():
+				if k in self.model_fields_dict:
 
-		self.select_data_dict['fields']={}
-		for k, v in self.where_data.items():
-			if k in self.model_fields_dict:
-				
-				self.select_data_dict['fields'][k]={}
-				self.select_data_dict['fields'][k]['field_instance'] = self.model_fields_dict[k]
-				self.select_data_dict['fields'][k]['where_value'] = v
-			else:
-				raise SelectFieldError(k)
+					self.select_data_dict['fields'][k]={}
+					self.select_data_dict['fields'][k]['field_instance'] = self.model_fields_dict[k]
+					self.select_data_dict['fields'][k]['where_value'] = v
+				else:
+					raise SelectFieldError(k)
 
 		return True
 
 	def create_sql(self):
-		SQL_TEMPLATE = "SELECT * FROM {table_name} WHERE {where_condition}"
+		SQL_TEMPLATE = "SELECT * FROM {table_name} {where_condition}"
+		where_condition = ""
 
-		field_where_names_arr = [field_name for field_name in self.select_data_dict['fields']]
-		field_where_value_arr= [fields['where_value'] for _, fields in self.select_data_dict['fields'].items()]
+		if "fields" in self.select_data_dict:
 
-		where_sql_arr = ["{name} = \"{value}\"".format(name=name, value=value) for name, value in zip(field_where_names_arr, field_where_value_arr)]
+			field_where_names_arr = [field_name for field_name in self.select_data_dict['fields']]
+			field_where_value_arr= [fields['where_value'] for _, fields in self.select_data_dict['fields'].items()]
 
-		where_condition = "".join(where_sql_arr)
+			where_sql_arr = ["{name} = \"{value}\"".format(name=name, value=value) for name, value in zip(field_where_names_arr, field_where_value_arr)]
+
+			where_condition = "WHERE " + " AND ".join(where_sql_arr)
 
 		sql = SQL_TEMPLATE.format(
 			table_name=self.select_data_dict['table_name'],
 			where_condition=where_condition
 		)
+		print(sql)
 
 		self.sql = sql
 		return True
 
 
-	def execute_sql(self):
-		self.results = execute_select(self.sql)
-
 	
-	def select_data(self):
+	def get_sql(self):
 		self.create_model_fields_dict()
 		self.create_select_data_dict()
 		self.create_sql()
-		self.execute_sql()
-		return self.results
+		return self.sql
