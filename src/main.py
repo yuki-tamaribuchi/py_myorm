@@ -6,7 +6,7 @@ from models.users import Users
 from models.entries import Entries
 
 #インサートサンプル
-#Users().objects.create(username='yuki', handle='ゆうき').run()
+Users().objects.create(username='yuki', handle='ゆうき').run()
 
 #WHERE条件(1つ)指定セレクトサンプル
 #users = Users().objects.get(username="yuki").run()
