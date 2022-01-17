@@ -1,3 +1,4 @@
+from framework.operates.generate_sql import generate
 from framework.operates.executes import execute, fetch
 
 class ObjectsBase(object):
@@ -6,10 +7,12 @@ class ObjectsBase(object):
 		self.mode = ""
 		self.sql = ""
 
+		self.sql_data_dict = {}
+
 	def create(self, **kwargs):
 		from framework.operates.insert import InsertRecord
 
-		self.mode="execute"
+		self.mode="create"
 
 		insert_data = kwargs
 		insert = InsertRecord(self.model_instance, insert_data)
@@ -31,15 +34,27 @@ class ObjectsBase(object):
 		self.sql = select.get_sql()
 		return self
 
+
 	def get(self, **kwargs):
+		if kwargs == {}:
+			from framework.exceptions.select import WhereClauseNotSpecifiedException
+			raise WhereClauseNotSpecifiedException(self.model_instance.__name__)
+		
+
 		from framework.operates.select import SelectRecord
 
-		self.mode = "fetch"
 		where_data = kwargs
-		select = SelectRecord(self.model_instance, where_data)
-		self.sql = select.get_sql()
-		return self
 		
+		self.sql_data_dict['sql_mode'] = "select"
+		self.sql_data_dict['called_function'] = "get"
+
+		select = SelectRecord(self.model_instance, where_data)
+		sql_data_dict = select.get_sql_data_dict()
+
+		self.sql_data_dict.update(sql_data_dict)
+
+		return self
+
 
 	def filter(self, *args, **kwargs):
 		pass
@@ -54,9 +69,22 @@ class ObjectsBase(object):
 		pass
 
 	def run(self):
-		if self.mode == "execute":
-			return execute(self.sql)
-		elif self.mode == "fetch":
-			return fetch(self.sql)
+		sql = generate(self.sql_data_dict)
+
+		if self.sql_data_dict["sql_mode"] == "select":
+			if self.sql_data_dict["called_function"] == "get":
+				result = fetch(sql)
+				if len(result) > 1:
+					from framework.exceptions.select import ResultNotOneException
+					raise ResultNotOneException
+				else:
+					return result
 		else:
-			print("Please set mode \"execute\" or \"fetch\"")
+			pass
+
+		#if self.mode == "execute":
+		#	return execute(self.sql)
+		#elif self.mode == "fetch":
+		#	return fetch(self.sql)
+		#else:
+		#	print("Please set mode \"execute\" or \"fetch\"")
