@@ -56,9 +56,10 @@ class InsertRecord:
 		return True
 
 
-	def get_sql(self):
+	def get_sql_data_dict(self):
 		self.create_fields_dict()
 		self.create_match_dict()
 		self.create_sql_data_set_dict()
+
 
 		return self.sql_data_dict
