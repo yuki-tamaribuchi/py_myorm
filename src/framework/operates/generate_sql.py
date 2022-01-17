@@ -3,6 +3,18 @@ INSERT_TEMPLATE = "INSERT INTO {table} ({columns}) VALUES ({values})"
 UPDATE_TEMPLATE = "UPDATE {table} SET {sets} {where}"
 DELETE_TEMPLATE = "DELETE FROM {table} {where} {order_by} {limit}"
 
+
+def generate_where(sql_data_dict):
+	field_names_arr = []
+	field_values_arr = []
+	for field_name in sql_data_dict["where"]:
+		field_names_arr.append(field_name)
+		field_values_arr.append("\"" + str(sql_data_dict["where"][field_name]["value"]) + "\"")
+		field_name_and_value_arr = ["{} = {}".format(name, value) for name, value in zip(field_names_arr, field_values_arr)]
+		where = "WHERE " + " AND ".join(field_name_and_value_arr)
+	return where
+
+
 def generate(sql_data_dict):
 	if sql_data_dict['sql_mode'] == "select":
 		template = SELECT_TEMPLATE
@@ -27,14 +39,8 @@ def generate(sql_data_dict):
 		else:
 			join = ""
 
-		field_names_arr = []
-		field_values_arr = []
 		if "where" in sql_data_dict:
-			for field_name in sql_data_dict["where"]:
-				field_names_arr.append(field_name)
-				field_values_arr.append("\"" + sql_data_dict["where"][field_name]["value"] + "\"")
-				field_name_and_value_arr = ["{} = {}".format(name, value) for name, value in zip(field_names_arr, field_values_arr)]
-				where = "WHERE " + " AND ".join(field_name_and_value_arr)
+			where = generate_where(sql_data_dict)
 		else:
 			where = ""
 
