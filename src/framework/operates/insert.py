@@ -13,8 +13,7 @@ class InsertRecord:
 		self.insert_data = insert_data
 		self.fields_dict = {}
 		self.match_dict = {}
-		self.data_set_dict = {}
-		self.sql = ""
+		self.sql_data_dict = {}
 
 
 	def create_fields_dict(self):
@@ -29,7 +28,7 @@ class InsertRecord:
 			field_instance_and_insert_data={}
 			if k in self.insert_data:
 				field_instance_and_insert_data['field_instance'] = v
-				field_instance_and_insert_data['insert_data'] = self.insert_data.pop(k)
+				field_instance_and_insert_data['insert_value'] = self.insert_data.pop(k)
 
 				self.match_dict[k] = field_instance_and_insert_data
 			else:
@@ -43,43 +42,23 @@ class InsertRecord:
 		return True
 		
 
-	def create_data_set_dict(self):
-		self.data_set_dict['table_name'] = self.model_instance.__name__.lower()
-		self.data_set_dict['data'] = {}
+	def create_sql_data_set_dict(self):
+		self.sql_data_dict['table_name'] = self.model_instance.__name__.lower()
+		self.sql_data_dict['insert_data'] = {}
 
 		for k, v in self.match_dict.items():
 			field_name = k
 
 			field_instance = v['field_instance']
 
-			field_instance.validate(k, v['insert_data'])
-			self.data_set_dict['data'][field_name] = v['insert_data']
+			field_instance.validate(k, v['insert_value'])
+			self.sql_data_dict['insert_data'][field_name] = v['insert_value']
 		return True
-	
-	def create_sql(self):
-		SQL_TEMPLATE = "INSERT INTO {table_name} ({field_names_sql}) VALUES ({field_values_sql})"
 
-
-		field_names_arr = [field_name for field_name, _ in self.data_set_dict['data'].items()]
-		field_values_arr = ["\"" + field_value + "\"" for _, field_value in self.data_set_dict['data'].items()]
-		
-		field_names_sql = ", ".join(field_names_arr)
-		field_values_sql = ", ".join(field_values_arr)
-
-		sql = SQL_TEMPLATE.format(
-			table_name=self.data_set_dict['table_name'],
-			field_names_sql=field_names_sql,
-			field_values_sql = field_values_sql
-		)
-
-		self.sql = sql
-
-		return True
 
 	def get_sql(self):
 		self.create_fields_dict()
 		self.create_match_dict()
-		self.create_data_set_dict()
-		self.create_sql()
+		self.create_sql_data_set_dict()
 
-		return self.sql
+		return self.sql_data_dict
