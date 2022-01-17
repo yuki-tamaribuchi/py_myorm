@@ -12,11 +12,11 @@ class ObjectsBase(object):
 	def create(self, **kwargs):
 		from framework.operates.insert import InsertRecord
 
-		self.mode="create"
+		self.sql_data_dict['sql_mode'] = "insert"
 
 		insert_data = kwargs
 		insert = InsertRecord(self.model_instance, insert_data)
-		self.sql = insert.get_sql()
+		self.sql_data_dict.update(insert.get_sql_data_dict())
 		return self
 
 
@@ -80,7 +80,7 @@ class ObjectsBase(object):
 				else:
 					return result
 		else:
-			pass
+			print(sql)
 
 		#if self.mode == "execute":
 		#	return execute(self.sql)
