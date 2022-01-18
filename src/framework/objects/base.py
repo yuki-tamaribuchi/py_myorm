@@ -38,7 +38,7 @@ class ObjectsBase(object):
 
 		self.mode = "fetch"
 		select = SelectRecord(self.model_instance)
-		self.sql = select.get_sql()
+		self.sql_data_dict = select.get_sql_data_dict()
 		return self
 
 
