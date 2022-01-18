@@ -2,6 +2,7 @@ from typing import Type
 
 from framework.models.base import ModelBase
 from framework.models.fields import FieldBase
+from framework.operates.filters import create_filter
 from framework.exceptions.select import SelectFieldError
 
 class SelectRecord:
@@ -16,6 +17,7 @@ class SelectRecord:
 		for k, v in self.model_instance.__dict__.items():
 			if issubclass(v.__class__, FieldBase):
 				self.model_fields_dict[k] = v
+		self.sql_data_dict['model_fields'] = self.model_fields_dict
 		return True
 
 	def create_sql_data_dict(self):
@@ -24,15 +26,8 @@ class SelectRecord:
 		if self.where_data is None:
 			pass
 		else:
-			self.sql_data_dict['where'] = {}
-			for k, v in self.where_data.items():
-				if k in self.model_fields_dict:
-
-					self.sql_data_dict['where'][k]={}
-					self.sql_data_dict['where'][k]['field_instance'] = self.model_fields_dict[k]
-					self.sql_data_dict['where'][k]['value'] = v
-				else:
-					raise SelectFieldError(k)
+			filter_dict = create_filter(self.model_fields_dict, self.where_data)
+			self.sql_data_dict['where'] = filter_dict
 
 		return True
 
