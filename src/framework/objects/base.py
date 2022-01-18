@@ -36,9 +36,11 @@ class ObjectsBase(object):
 	def all(self):
 		from framework.operates.select import SelectRecord
 
-		self.mode = "fetch"
+		self.sql_data_dict["sql_mode"] = "select"
+		self.sql_data_dict["called_function"] = "all"
+
 		select = SelectRecord(self.model_instance)
-		self.sql_data_dict = select.get_sql_data_dict()
+		self.sql_data_dict.update(select.get_sql_data_dict())
 		return self
 
 
